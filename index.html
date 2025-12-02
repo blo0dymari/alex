@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для Алекс</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #fff5f7 0%, #ffeef2 25%, #ffe4ec 50%, #fad2e1 100%);
+            color: #5a3940;
+            font-family: 'Quicksand', sans-serif;
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Анимации */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes floatHearts {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+        }
+        @keyframes hintPulse {
+            0% { opacity: 1; transform: translateY(0) scale(1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+            50% { opacity: 0.8; transform: translateY(0) scale(1.05); box-shadow: 0 6px 20px rgba(164, 19, 60, 0.4); }
+            100% { opacity: 1; transform: translateY(0) scale(1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+        }
+
+        /* Плавающие сердечки по всему сайту */
+        .hearts-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .floating-heart {
+            position: absolute;
+            font-size: 200px;
+            color: rgba(255, 105, 180, 0.15);
+            animation: floatHearts 30s linear infinite;
+        }
+
+        /* Новый стиль шапки с наклоном */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+            background: linear-gradient(45deg, #ffafcc 0%, #ffc8dd 50%, #f8b6c1 100%);
+        }
+        .hero-content { 
+            animation: fadeIn 1.5s ease-out; 
+            z-index: 2; 
+            max-width: 800px;
+            position: relative;
+        }
+        .hero h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5.5rem;
+            color: #a4133c;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 0px rgba(255, 255, 255, 0.5);
+            animation: pulse 3s infinite;
+        }
+        .hero p.lead {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #800f2f;
+            margin-bottom: 15px;
+        }
+        .hero .hero-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.1rem;
+            color: #5a3940;
+        }
+
+        /* Секция "О нас" */
+        .about-section {
+            max-width: 1000px;
+            margin: 80px auto;
+            padding: 50px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 35px;
+            box-shadow: 0 15px 40px rgba(188, 112, 152, 0.12);
+            position: relative;
+            overflow: hidden;
+            border: 12px solid transparent;
+            background-clip: padding-box;
+            border-image: linear-gradient(45deg, #ffafcc, #ffc8dd) 1;
+        }
+        .about-section h2 {
+            font-family: 'Dancing Script', cursive;
+            color: #a4133c;
+            font-size: 3.2rem;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        .about-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 35px;
+            align-items: center;
+        }
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+        .about-photo {
+            flex: 1;
+            min-width: 300px;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 12px 12px 0 rgba(164, 19, 60, 0.08);
+            transform: rotate(3deg);
+            transition: transform 0.5s;
+        }
+        .about-photo:hover { transform: rotate(0deg) scale(1.03); }
+        .about-photo img { width: 100%; height: auto; display: block; }
+
+        /* Карточки воспоминаний */
+        .memories-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        .memory-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(214, 112, 147, 0.12);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .memory-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(214, 112, 147, 0.2);
+        }
+        .memory-img {
+            height: 200px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .memory-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s ease;
+        }
+        .memory-card:hover .memory-img img { transform: scale(1.1); }
+        .memory-caption {
+            padding: 22px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(to bottom, transparent, rgba(255, 245, 247, 0.9));
+        }
+        .memory-caption h3 {
+            font-family: 'Playfair Display', serif;
+            color: #a4133c;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+        .memory-caption p {
+            font-family: 'Quicksand', sans-serif;
+            color: #5a3940;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        /* Галерея */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 60px auto; /* Уменьшил отступ сверху */
+            padding: 0 20px;
+        }
+        .gallery-item {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(214, 112, 147, 0.12);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .gallery-item:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(214, 112, 147, 0.2);
+        }
+        .gallery-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.7s ease;
+        }
+        .gallery-item:hover .gallery-img { transform: scale(1.1); }
+        .gallery-caption {
+            padding: 22px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(to bottom, transparent, rgba(255, 245, 247, 0.9));
+        }
+        .gallery-caption h3 {
+            font-family: 'Playfair Display', serif;
+            color: #a4133c;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+        .gallery-caption p {
+            font-family: 'Quicksand', sans-serif;
+            color: #5a3940;
+            font-size: 0.85rem;
+        }
+
+        /* Футер */
+        footer {
+            background: linear-gradient(45deg, #a4133c 0%, #c9184a 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px 30px;
+            margin-top: 50px; /* Уменьшил отступ сверху */
+            position: relative;
+            clip-path: polygon(0 15%, 100% 0, 100% 100%, 0% 100%);
+        }
+        footer::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23a4133c' fill-opacity='1' d='M0,128L48,138.7C96,149,192,171,288,186.7C384,203,480,213,576,192C672,171,768,117,864,101.3C960,85,1056,107,1152,122.7C1248,139,1344,149,1392,154.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat;
+            background-size: cover;
+        }
+        footer .heart {
+            color: #ffccd5;
+            animation: pulse 1.5s infinite;
+            display: inline-block;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        footer .heart:hover { animation: pulse 0.5s infinite; transform: scale(1.3); }
+        footer p {
+            font-family: 'Playfair Display', serif;
+            margin: 8px 0;
+            font-size: 1rem;
+        }
+
+        /* Модальное окно с подписью */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0,0,0,0.95); 
+            animation: fadeIn 0.3s; 
+        }
+        .modal-content-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 90%;
+            max-height: 90%;
+            text-align: center;
+        }
+        .modal-content {
+            max-width: 100%;
+            max-height: 75vh;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.5);
+            display: block;
+            margin: 0 auto;
+        }
+        .modal-caption {
+            color: white;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            margin-top: 15px;
+            font-size: 1.2rem;
+            padding: 0 20px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+        .close { 
+            position: absolute; 
+            top: 20px; 
+            right: 35px; 
+            color: #fff; 
+            font-size: 40px; 
+            cursor: pointer; 
+            z-index: 1001; 
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Пасхалка и подсказка */
+        .easter-egg {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 25px;
+            height: 25px;
+            background: radial-gradient(circle, #ff4d6d, #a4133c);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 999;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 15px #ff4d6d;
+        }
+        .hint {
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            background: rgba(164, 19, 60, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 998;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-family: 'Quicksand', sans-serif;
+        }
+        .hint.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .hint-pulse {
+            animation: hintPulse 2s ease-in-out infinite;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3.5rem; }
+            .hero p.lead { font-size: 1.5rem; }
+            .hero .hero-subtitle { font-size: 1rem; }
+            .about-section { padding: 30px; margin: 50px 20px; }
+            .about-section h2 { font-size: 2.8rem; }
+            .about-text, .memory-caption p, .gallery-caption p { font-size: 0.95rem; }
+            footer { margin-top: 40px; padding-top: 50px; }
+            .hint { bottom: 50px; right: 10px; font-size: 12px; }
+            .modal-caption { font-size: 1rem; }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 2.8rem; }
+            .hero p.lead { font-size: 1.3rem; }
+            .about-section { padding: 25px 20px; margin: 40px 15px; }
+            .about-section h2 { font-size: 2.4rem; }
+            .about-content, .memories-container, .gallery-grid { gap: 20px; }
+            .memory-card, .gallery-item { border-radius: 18px; }
+            .memory-img, .gallery-img { height: 180px; }
+            .memory-caption, .gallery-caption { padding: 18px; }
+            .memory-caption h3, .gallery-caption h3 { font-size: 1.2rem; }
+            footer { margin-top: 30px; padding: 30px 15px 25px; clip-path: polygon(0 10%, 100% 0, 100% 100%, 0% 100%); }
+            footer p { font-size: 0.9rem; }
+            .close { top: 15px; right: 20px; font-size: 35px; width: 40px; height: 40px; }
+        }
+
+        @media (max-width: 320px) {
+            .hero h1 { font-size: 2.3rem; }
+            .hero p.lead { font-size: 1.1rem; }
+            .hero .hero-subtitle { font-size: 0.9rem; }
+            .about-section { margin: 30px 10px; padding: 20px 15px; }
+            .about-section h2 { font-size: 2rem; margin-bottom: 25px; }
+            .about-text { font-size: 0.9rem; line-height: 1.6; }
+            .memories-container, .gallery-grid { 
+                grid-template-columns: 1fr; 
+                padding: 0 15px;
+                gap: 18px;
+            }
+            .memory-img, .gallery-img { height: 160px; }
+            .memory-caption h3, .gallery-caption h3 { font-size: 1.1rem; }
+            .memory-caption p, .gallery-caption p { font-size: 0.85rem; }
+            footer { margin-top: 25px; padding: 25px 10px 20px; }
+            footer p { font-size: 0.85rem; }
+            .hint { bottom: 45px; right: 8px; padding: 8px 12px; font-size: 11px; }
+            .easter-egg { bottom: 15px; right: 15px; width: 22px; height: 22px; }
+            .floating-heart { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Плавающие сердечки по всему сайту -->
+    <div class="hearts-bg" id="heartsBg"></div>
+    
+    <!-- Пасхалка -->
+    <div class="easter-egg" id="easterEgg"></div>
+    <!-- Подсказка для пасхалки -->
+    <div class="hint" id="easterEggHint">Нажми на сердечко! ❤</div>
+
+    <!-- Шапка -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Алекс</h1>
+            <p class="lead">Для самой прекрасной подруги на свете</p>
+            <p class="hero-subtitle">Каждое воспоминание о тебе - было безумно счастливым</p>
+        </div>
+    </header>
+
+    <main>
+        <!-- Секция "О нас" -->
+        <section class="about-section">
+            <h2>О нашей дружбе</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Иногда я думаю, что наша дружба, которая длится с самого нашего рождения - вечна. Может так оно и есть. Да, были разногласия, но знай, что я всегда рядом, всегда поддержу тебя и никогда не брошу.</p>
+                    <p>Ты — тот человек, с которым даже молчание становится уютным. Спасибо тебе за каждое мгновение, за каждую улыбку, за то, что ты просто есть в моей жизни. Этот маленький сайт — лишь скромное отражение того, как сильно я ценю нашу связь.</p>
+                </div>
+                <div class="about-photo">
+                    <img src="imgs/5350327682631591814.jpg" alt="Наша дружба">
+                </div>
+            </div>
+        </section>
+
+        <!-- Карточки воспоминаний -->
+        <section class="memories-section" style="padding: 20px;">
+            <h2 style="text-align: center; font-family: 'Dancing Script', cursive; color: #a4133c; font-size: 3.2rem; margin-bottom: 40px;">Наши истории</h2>
+            <div class="memories-container">
+                <div class="memory-card">
+                    <div class="memory-img">
+                        <img src="imgs/5447141266300203376.jpg" alt="Поездка на Волгу">
+                    </div>
+                    <div class="memory-caption">
+                        <h3>Та самая поездка на Волгу</h3>
+                        <p>Это была лучшая поездка на Волгу за последние года. Одна из тех, которая вызвала у меня искреннее счастье и радость. Шашлыки, настолки, купание и прогулки. Я никогда не забуду это.</p>
+                    </div>
+                </div>
+                <div class="memory-card">
+                    <div class="memory-img">
+                        <img src="imgs/5368493633357073245.jpg" alt="Запоминающаяся ночь">
+                    </div>
+                    <div class="memory-caption">
+                        <h3>Самая запоминающаяся ночь</h3>
+                        <p>Я готова напоминать о ней тебе вечно. ВЕДЬ ЭТО БЫЛО И ВЕСЕЛО И СТРЕМНО. Как ты вылакала кучу вина на голодный желудок, мы танцевали, а потом... я играла в генш, а ты... ну сама знаешь)</p>
+                    </div>
+                </div>
+                <div class="memory-card">
+                    <div class="memory-img">
+                        <img src="imgs/5395646743019903220.jpg" alt="Наша традиция">
+                    </div>
+                    <div class="memory-caption">
+                        <h3>Наша традиция</h3>
+                        <p>Уверена, что ни у кого нет традиции петь каждую весну песню Wolf in Sheep's Clothing. И считаю, что с каждым годом у нас выходит всё лучше и лучше. Пусть иногда и петушим АХАХХААХ.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Галерея -->
+        <section style="padding: 20px;">
+            <h2 style="text-align: center; font-family: 'Dancing Script', cursive; color: #a4133c; font-size: 3.2rem; margin-bottom: 40px;">Моменты счастья</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img class="gallery-img" src="imgs/5296374131660539067.jpg" alt="Нови год">
+                    <div class="gallery-caption">
+                        <h3>Нови год</h3>
+                        <p>На самом не единственный, который мы провели вместе, но самый весёлый. Ещё и Дашка была тоже.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-img" src="imgs/5188534280316378877.jpg" alt="Ну любимки">
+                    <div class="gallery-caption">
+                        <h3>Ну любимки</h3>
+                        <p>Такие красивые и хорошие. Обожаю вас, вы офигенно друг с другом смотритесь.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-img" src="imgs/5451935905796444776.jpg" alt="Наш выпускной">
+                    <div class="gallery-caption">
+                        <h3>Наш выпускной</h3>
+                        <p>Самая лучшая фотка за тот чёртов день. Я её очень сильно обожаю.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-img" src="imgs/5233729211854873283.jpg" alt="Одна из многих ночевок">
+                    <div class="gallery-caption">
+                        <h3>Одна из многих ночевок</h3>
+                        <p>Мы тогда помню смотрели дарованного и плакали жестко. И ТОГДА ХОТЯ БЫ ПОЛУЧИЛОСЬ ПОПЛАКАТЬ, А НЕ КОГДА МЫ ПИПИТУ СМОТРЕЛИ.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-img" src="imgs/5291853708646277644.jpg" alt="Прошлогодняя поездка на Волгу">
+                    <div class="gallery-caption">
+                        <h3>Прошлогодняя поездка на Волгу</h3>
+                        <p>Она тоже была по своему хороша, вы тогда с Серёгой очень скорешились, ЧТО ТЫ АЖ БРОСИЛА МЕНЯ ОДНУ СМОТРЕТЬ МУЛАН, А САМА ПОШЛА ТУСИТЬ.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-img" src="imgs/5240370588504152699.jpg" alt="Спасательницы Малибу">
+                    <div class="gallery-caption">
+                        <h3>Спасательницы Малибу</h3>
+                        <p>АХАХАХАХАХААХ, вы меня с Владом тогда подкидывали. Блин, было круто, надеюсь, что в следующем году всё же получится снова так искупаться.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-img" src="imgs/5210877881306177300.jpg" alt="Утро на площадке">
+                    <div class="gallery-caption">
+                        <h3>Утро на площадке</h3>
+                        <p>Атмосферное было утро... ещё и с горки покатались и полазили, как обезьянки и дуры две, зато было весело.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-img" src="imgs/5296243169521503083.jpg" alt="Одна из многих прогулок">
+                    <div class="gallery-caption">
+                        <h3>Одна из многих прогулок</h3>
+                        <p>Тусить на кораблях стало тоже одной из традиций, пусть и сейчас не особо соблюдаема. Зато помнишь... КАПИТАН ЛЕВИ! ДА? СЕЙЧАС ТЕБЯ НУЖНО ВОСПИТЫВАТЬ.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-img" src="imgs/5312471879539351454.jpg" alt="БЕЗ КОММЕНТОВ">
+                    <div class="gallery-caption">
+                        <h3>БЕЗ КОММЕНТОВ</h3>
+                        <p>Та ночевка у Олеси была ебанутой реально. Как мы обсуждали эти астралы, баррикадировали дверь стулом, потом в караоке пели, когда время было 12 дня..</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Футер -->
+    <footer>
+        <p>Создано с <span class="heart" id="secretHeart">❤</span> для моей подруги Алекс</p>
+        <p>Наша дружба — смесь ебанутости и доверия</p>
+    </footer>
+
+    <!-- Модальное окно -->
+    <div id="imageModal" class="modal">
+        <span class="close" id="closeModal">&times;</span>
+        <div class="modal-content-container">
+            <img class="modal-content" id="modalImage">
+            <div class="modal-caption" id="modalCaption"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Создаем летающие сердечки по всему сайту
+            const heartsBg = document.getElementById('heartsBg');
+            for (let i = 0; i < 100; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('floating-heart');
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.fontSize = (Math.random() * 15 + 12) + 'px';
+                heart.style.animationDelay = Math.random() * 25 + 's';
+                heart.style.opacity = Math.random() * 0.3 + 0.1;
+                heartsBg.appendChild(heart);
+            }
+
+            
+
+            // 2. Функционал модального окна для фотографий
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const modalCaption = document.getElementById('modalCaption');
+            const closeModal = document.getElementById('closeModal');
+            const allImages = document.querySelectorAll('.memory-img img, .gallery-img, .about-photo img');
+            
+            allImages.forEach(img => {
+                img.style.cursor = 'pointer';
+                img.addEventListener('click', function() {
+                    modal.style.display = 'block';
+                    modalImg.src = this.src;
+                    modalImg.alt = this.alt;
+                    // Ищем ближайший заголовок для подписи
+                    const caption = this.closest('.memory-card, .gallery-item, .about-photo')
+                                     ?.querySelector('h3')?.textContent || this.alt;
+                    modalCaption.textContent = caption;
+                });
+            });
+
+            // Переменные для пасхалки
+            let easterEggState = 0;
+            const easterImages = [
+                {src: 'imgs/5310306022021260752.jpg', caption: 'Пасхалочка)'},
+                {src: 'imgs/5296243169521503085.jpg', caption: 'Баба Суга'}
+            ];
+
+            // 3. Пасхалка с двумя фото
+            const easterEgg = document.getElementById('easterEgg');
+            const secretHeart = document.getElementById('secretHeart');
+            const easterEggHint = document.getElementById('easterEggHint');
+            let hintShown = false;
+            
+            function showEasterEgg() {
+                modal.style.display = 'block';
+                modalImg.src = easterImages[easterEggState].src;
+                modalImg.alt = 'Секретное фото для Алекс!';
+                modalCaption.textContent = easterImages[easterEggState].caption;
+                easterEggHint.classList.remove('show', 'hint-pulse');
+            }
+
+            if (easterEgg) easterEgg.addEventListener('click', showEasterEgg);
+            if (secretHeart) secretHeart.addEventListener('click', showEasterEgg);
+
+            // 4. При закрытии модального окна показываем второе фото (если это была пасхалка)
+            closeModal.addEventListener('click', function() {
+                if (modalImg.src.includes(easterImages[0].src) && easterEggState === 0) {
+                    easterEggState = 1;
+                    modalImg.src = easterImages[1].src;
+                    modalCaption.textContent = easterImages[1].caption;
+                } else {
+                    modal.style.display = 'none';
+                    easterEggState = 0;
+                }
+            });
+
+            // Закрытие при клике на затемненную область
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    if (modalImg.src.includes(easterImages[0].src) && easterEggState === 0) {
+                        easterEggState = 1;
+                        modalImg.src = easterImages[1].src;
+                        modalCaption.textContent = easterImages[1].caption;
+                    } else {
+                        modal.style.display = 'none';
+                        easterEggState = 0;
+                    }
+                }
+            });
+
+            // 5. Функция показа подсказки
+            function checkScroll() {
+                if (hintShown) return;
+                const footer = document.querySelector('footer');
+                if (!footer) return;
+                const footerRect = footer.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                if (footerRect.top < windowHeight) {
+                    easterEggHint.classList.add('show');
+                    setTimeout(() => {
+                        easterEggHint.classList.add('hint-pulse');
+                    }, 500);
+                    hintShown = true;
+                }
+            }
+            window.addEventListener('scroll', checkScroll);
+            checkScroll();
+
+            // 6. Плавное появление элементов
+            const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeIn 1s ease-out forwards';
+                    }
+                });
+            }, observerOptions);
+            document.querySelectorAll('section, .memory-card, .gallery-item').forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>
